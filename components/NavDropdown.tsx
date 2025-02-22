@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Pressable, Animated, View } from 'react-native';
+import { StyleSheet, Pressable, Animated, View, ViewStyle, TextStyle } from 'react-native';
 import { Link, usePathname } from 'expo-router';
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { navItems } from '@/constants/navigation';
 import type { Route } from '@/constants/navigation';
+import { useTheme } from '@/context/ThemeContext';
 
 interface SubItem {
   label: string;
@@ -38,8 +37,10 @@ interface NavDropdownProps {
 
 export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps) {
   const pathname = usePathname();
-  const colorScheme = useColorScheme();
+  const { currentTheme } = useTheme();
   
+  const activeColor = currentTheme.colors.primary;
+
   const [isOpen, setIsOpen] = useState(() => {
     if (hasSubItems(item)) {
       return item.subItems.some(subItem => subItem.href === pathname);
@@ -73,11 +74,78 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
 
   const isActive = (href?: Route) => pathname === href;
   const isParentActive = hasSubItems(item) && item.subItems.some(subItem => subItem.href === pathname);
-  const activeColor = '#1E90FF';
+
+  const styles = StyleSheet.create({
+    container: {
+      position: 'relative',
+      backgroundColor: currentTheme.colors.background,
+    },
+    mobileContainer: {
+      width: '100%',
+    },
+    dropdownContainer: {
+      width: '100%',
+    },
+    dropdown: {
+      position: 'relative',
+      width: '100%',
+      paddingLeft: 16,
+      marginTop: 4,
+    },
+    link: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: 12,
+      borderColor: currentTheme.colors.border,
+    },
+    mainLink: {
+      flex: 1,
+    },
+    linkText: {
+      fontSize: 16,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      color: currentTheme.colors.text,
+    },
+    subLink: {
+      padding: 12,
+      backgroundColor: currentTheme.colors.surface,
+    },
+    subLinkText: {
+      fontSize: 14,
+      color: currentTheme.colors.textSecondary,
+    },
+    desktopDropdown: {
+      position: 'absolute',
+      top: '100%',
+      left: 0,
+      minWidth: 200,
+      borderRadius: 8,
+      backgroundColor: currentTheme.colors.background,
+      borderColor: currentTheme.colors.border,
+      borderWidth: 1,
+      shadowColor: currentTheme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+      zIndex: 1000,
+    },
+    hoverArea: {
+      position: 'relative',
+    },
+    mobileSubItems: {
+      paddingLeft: 20,
+    },
+    mobileSubItem: {
+      paddingVertical: 12,
+    },
+  });
 
   if (isMobile) {
     return (
-      <View>
+      <View style={{ backgroundColor: 'red'}}>
         {hasSubItems(item) ? (
           <>
             <Pressable 
@@ -101,7 +169,7 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
                 <Ionicons 
                   name="chevron-down"
                   size={24} 
-                  color={Colors[colorScheme ?? 'light'].text} 
+                  color={currentTheme.colors.text} 
                 />
               </Animated.View>
             </Pressable>
@@ -174,7 +242,7 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
                   })
                 }]
               }}>
-                <Ionicons name="chevron-down" size={18} color={Colors[colorScheme ?? 'light'].text} />
+                <Ionicons name="chevron-down" size={18} color={currentTheme.colors.text} />
               </Animated.View>
             </Pressable>
           )}
@@ -183,7 +251,7 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
           <ThemedView 
             style={[
               styles.desktopDropdown,
-              { backgroundColor: Colors[colorScheme ?? 'light'].background }
+              { backgroundColor: currentTheme.colors.background }
             ]}
           >
             {item.subItems.map((subItem) => (
@@ -208,63 +276,4 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'relative',
-  },
-  mobileContainer: {
-    width: '100%',
-  },
-  dropdownContainer: {
-    width: '100%',
-  },
-  dropdown: {
-    position: 'relative',
-    width: '100%',
-    paddingLeft: 16,
-    marginTop: 4,
-  },
-  link: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-  },
-  mainLink: {
-    flex: 1,
-  },
-  linkText: {
-    fontSize: 16,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  subLink: {
-    padding: 12,
-  },
-  subLinkText: {
-    fontSize: 14,
-    opacity: 0.8,
-  },
-  desktopDropdown: {
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    minWidth: 200,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    zIndex: 1000,
-  },
-  hoverArea: {
-    position: 'relative',
-  },
-  mobileSubItems: {
-    paddingLeft: 20,
-  },
-  mobileSubItem: {
-    paddingVertical: 12,
-  },
-}); 
+export default NavDropdown; 

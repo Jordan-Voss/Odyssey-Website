@@ -1,4 +1,5 @@
 import { Text, type TextProps, StyleSheet } from 'react-native';
+import { useTheme } from '@/context/ThemeContext';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
 
@@ -15,12 +16,13 @@ export function ThemedText({
   type = 'default',
   ...rest
 }: ThemedTextProps) {
+  const { currentTheme } = useTheme();
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
 
   return (
     <Text
       style={[
-        { color },
+        { color: currentTheme.colors.text },
         type === 'default' ? styles.default : undefined,
         type === 'title' ? styles.title : undefined,
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,

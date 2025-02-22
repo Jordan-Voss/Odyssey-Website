@@ -3,12 +3,38 @@ import { StyleSheet, Image, ColorSchemeName } from 'react-native';
 import { Link, usePathname } from 'expo-router';
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
+import { useTheme } from '@/context/ThemeContext';
 
-interface HeaderProps {
-  colorScheme?: ColorSchemeName;
-}
 
-export function Header({ colorScheme }: HeaderProps) {
+export function Header() {
+  const { currentTheme } = useTheme();
+  const styles = StyleSheet.create({
+    headerLink: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      height: '100%',
+      backgroundColor: currentTheme.colors.background,
+    },
+    headerContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      height: '100%',
+    },
+    logo: {
+      width: 60,
+      height: '100%',
+      marginVertical: -8,
+    },
+    headerText: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: currentTheme.colors.headerText,
+    },
+    separator: {
+      opacity: 0.5,
+    },
+  }); 
   const pathname = usePathname();
   const isHome = pathname === '/';
 
@@ -25,7 +51,7 @@ export function Header({ colorScheme }: HeaderProps) {
         return 'PROGRAMMING';
       case '/coaching/technique':
         return 'TECHNIQUE ANALYSIS';
-      case '/about':
+      case '/about/page':
         return 'ABOUT';
       case '/about/team':
         return 'OUR TEAM';
@@ -56,28 +82,3 @@ export function Header({ colorScheme }: HeaderProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  headerLink: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: '100%',
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    height: '100%',
-  },
-  logo: {
-    width: 60,
-    height: '100%',
-    marginVertical: -8,
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  separator: {
-    opacity: 0.5,
-  },
-}); 

@@ -3,6 +3,7 @@ import { StyleSheet, Pressable, ViewStyle, TextStyle } from "react-native";
 import { Link } from "expo-router";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+import { useTheme } from "@/context/ThemeContext";
 
 interface Tier {
   title: string;
@@ -58,6 +59,83 @@ const tiers: Tier[] = [
 ];
 
 export default function Pricing() {
+  const { currentTheme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      padding: 40,
+      backgroundColor: currentTheme.colors.surface,
+    },
+    header: {
+      fontSize: 36,
+      color: currentTheme.colors.text,
+      textAlign: "center",
+      marginBottom: 40,
+    },
+    tiersContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "center",
+      gap: 20,
+      maxWidth: 1400,
+      marginHorizontal: "auto",
+    },
+    tier: {
+      backgroundColor: currentTheme.colors.card.background,
+      padding: 30,
+      width: "23%",
+      minWidth: 280,
+      alignItems: "center",
+      justifyContent: "space-between",
+      height: 600,
+      borderColor: currentTheme.colors.card.border,
+      borderWidth: 1,
+      shadowColor: currentTheme.colors.card.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: "bold",
+      textAlign: "center",
+      marginBottom: 20,
+      color: currentTheme.colors.text,
+    },
+    price: {
+      fontSize: 20,
+      marginBottom: 20,
+      color: currentTheme.colors.priceText,
+    },
+    description: {
+      textAlign: "center",
+      marginBottom: 20,
+      fontSize: 16,
+      lineHeight: 24,
+      color: currentTheme.colors.textSecondary,
+    },
+    feature: {
+      textAlign: "center",
+      marginBottom: 10,
+      fontSize: 14,
+      lineHeight: 20,
+      color: currentTheme.colors.textSecondary,
+    },
+    button: {
+      backgroundColor: currentTheme.colors.button.primary.background,
+      paddingVertical: 12,
+      paddingHorizontal: 24,
+      marginTop: "auto",
+      width: "80%",
+    },
+    buttonText: {
+      color: currentTheme.colors.button.primary.text,
+      fontSize: 14,
+      fontWeight: "bold",
+      textAlign: "center",
+    },
+  });
+
   return (
     <ThemedView style={styles.container as ViewStyle}>
       <ThemedText style={styles.header as TextStyle}>BEGIN YOUR ODYSSEY TODAY.</ThemedText>
@@ -82,73 +160,4 @@ export default function Pricing() {
       </ThemedView>
     </ThemedView>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 40,
-    backgroundColor: "#000",
-  },
-  header: {
-    fontSize: 36,
-    color: "#fff",
-    textAlign: "center",
-    marginBottom: 40,
-  },
-  tiersContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 20,
-    maxWidth: 1400,
-    marginHorizontal: "auto",
-  },
-  tier: {
-    backgroundColor: "#fff",
-    padding: 30,
-    width: "23%",
-    minWidth: 280,
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: 600,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#000",
-  },
-  price: {
-    fontSize: 20,
-    marginBottom: 20,
-    color: "#000",
-  },
-  description: {
-    textAlign: "center",
-    marginBottom: 20,
-    fontSize: 16,
-    lineHeight: 24,
-    color: "#000",
-  },
-  feature: {
-    textAlign: "center",
-    marginBottom: 10,
-    fontSize: 14,
-    lineHeight: 20,
-    color: "#000",
-  },
-  button: {
-    backgroundColor: "#000",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    marginTop: "auto",
-    width: "80%",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-}); 
+} 

@@ -47,3 +47,4 @@ export type Route =
   | '/about/philosophy'
   | '/(pages)/coaching/page'
   | '/(pages)/sign-up/page'; 
+  

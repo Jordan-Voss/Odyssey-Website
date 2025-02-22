@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, View, Animated } from 'react-native';
+import { StyleSheet, Image, View, Animated, ViewStyle, ImageStyle } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
+import { useTheme } from '@/context/ThemeContext';
 
 function Counter({ target }: { target: number }) {
   const [count, setCount] = useState(0);
+  const { currentTheme } = useTheme();
+
+  const styles = StyleSheet.create({
+    counterText: {
+      color: currentTheme.colors.statNumber,
+      fontSize: 80,
+      fontWeight: 'bold',
+      marginBottom: 10,
+      lineHeight: 80,
+    }
+  });
 
   useEffect(() => {
     const duration = 2000; // 2 seconds
@@ -30,6 +42,65 @@ function Counter({ target }: { target: number }) {
 }
 
 export default function Gallery() {
+  const { currentTheme } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      height: 500,
+      width: '100%',
+      position: 'relative',
+      backgroundColor: currentTheme.colors.surface,
+    },
+    title: {
+      fontSize: 36,
+      color: currentTheme.colors.text,
+      textAlign: 'center',
+      marginBottom: 40,
+    },
+    imagesGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      height: '100%',
+    },
+    imageContainer: {
+      width: '16.666%',
+      height: '33.333%',
+    },
+    gridImage: {
+      width: '100%',
+      height: '100%',
+    },
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0,0,0,0.8)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    statsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      width: '100%',
+      maxWidth: 1200,
+      paddingHorizontal: 20,
+    },
+    statItem: {
+      alignItems: 'center',
+      width: '30%',
+      flexDirection: 'column',
+    },
+    statLabel: {
+      color: '#fff',
+      fontSize: 24,
+      textAlign: 'center',
+      marginTop: 0,
+      maxWidth: '80%',
+    },
+  });
+
   const baseImages = [
     require('@/assets/images/gallery/1.png'),
     require('@/assets/images/gallery/2.png'),
@@ -40,7 +111,6 @@ export default function Gallery() {
     require('@/assets/images/gallery/7.png'),
     require('@/assets/images/gallery/8.png'),
     require('@/assets/images/gallery/9.png'),
-    
   ];
 
   const gridSize = 18;
@@ -99,8 +169,9 @@ export default function Gallery() {
   }, [nextImages]);
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.imagesGrid}>
+    <ThemedView style={styles.container as ViewStyle}>
+      {/* <ThemedText style={styles.title}>Gallery</ThemedText> */}
+      <ThemedView style={styles.imagesGrid}>
         {currentImages.map((img, index) => (
           <Animated.View 
             key={index}
@@ -116,84 +187,26 @@ export default function Gallery() {
             />
           </Animated.View>
         ))}
-      </View>
-      
-      <View style={styles.overlay}>
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Counter target={187} />
-            <ThemedText style={styles.statLabel}>Athletes (And Counting!)</ThemedText>
-          </View>
-          
-          <View style={styles.statItem}>
-            <Counter target={50} />
-            <ThemedText style={styles.statLabel}>National Champions</ThemedText>
-          </View>
-          
-          <View style={styles.statItem}>
-            <Counter target={9} />
-            <ThemedText style={styles.statLabel}>International Athletes</ThemedText>
+        
+        <View style={styles.overlay}>
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Counter target={187}/>
+              <ThemedText style={styles.statLabel}>Athletes (And Counting!)</ThemedText>
+            </View>
+            
+            <View style={styles.statItem}>
+              <Counter target={50}/>
+              <ThemedText style={styles.statLabel}>National Champions</ThemedText>
+            </View>
+            
+            <View style={styles.statItem}>
+              <Counter target={9}/>
+              <ThemedText style={styles.statLabel}>International Athletes</ThemedText>
+            </View>
           </View>
         </View>
-      </View>
+      </ThemedView>
     </ThemedView>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    height: 500,
-    width: '100%',
-    position: 'relative',
-    backgroundColor: '#000',
-  },
-  imagesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    height: '100%',
-  },
-  imageContainer: {
-    width: '16.666%',
-    height: '33.333%',
-  },
-  gridImage: {
-    width: '100%',
-    height: '100%',
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    maxWidth: 1200,
-    paddingHorizontal: 20,
-  },
-  statItem: {
-    alignItems: 'center',
-    width: '30%',
-    flexDirection: 'column',
-  },
-  counterText: {
-    color: '#fff',
-    fontSize: 80,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    lineHeight: 80,
-  },
-  statLabel: {
-    color: '#fff',
-    fontSize: 24,
-    textAlign: 'center',
-    marginTop: 0,
-    maxWidth: '80%',
-  },
-}); 
+} 

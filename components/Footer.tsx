@@ -1,8 +1,9 @@
 import React from 'react';
 import { StyleSheet, ViewStyle, TextStyle, Pressable, Image, View,useWindowDimensions} from 'react-native';
 import { Link } from 'expo-router';
-import { ThemedView } from './ThemedView';
-import { ThemedText } from './ThemedText';
+import { ThemedView } from '@/components/ThemedView';
+import { ThemedText } from '@/components/ThemedText';
+import { useTheme } from '@/context/ThemeContext';
 
 const footerLinks = {
   About: [
@@ -28,10 +29,69 @@ const footerLinks = {
 } as const;
 
 export default function Footer() {
+  const { currentTheme } = useTheme();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
+
+  const styles = StyleSheet.create({
+    footer: {
+      backgroundColor: currentTheme.colors.surface,
+      padding: 40,
+      alignItems: 'center',
+      width: '100%',
+    },
+    content: {
+      maxWidth: 1200,
+      width: '100%',
+      alignItems: 'center',
+    },
+    linksContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-around',
+      width: '100%',
+      marginBottom: 48,
+    },
+    section: {
+      minWidth: 160,
+      marginBottom: 24,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: currentTheme.colors.text,
+      marginBottom: 16,
+    },
+    link: {
+      color: currentTheme.colors.textSecondary,
+      fontSize: 16,
+      marginBottom: 8,
+    },
+    bottom: {
+      borderTopWidth: 1,
+      borderTopColor: currentTheme.colors.border,
+      paddingTop: 24,
+      width: '100%',
+      alignItems: 'center',
+    },
+    copyright: {
+      color: currentTheme.colors.textSecondary,
+      fontSize: 14,
+    },
+    footerImage: {
+      width: '100%',
+      height: '330%',
+      marginBottom: 20,
+    },
+    footerImageMobile: {
+      width: '100%',
+      height: '50%',
+      marginBottom: 20,
+    }
+  });
+
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={styles.footer as ViewStyle}>
       <Image 
         source={require('@/assets/images/footer-no-bg.png')}
         style={isMobile ? styles.footerImageMobile : styles.footerImage}
@@ -41,7 +101,7 @@ export default function Footer() {
         <ThemedView style={styles.linksContainer as ViewStyle}>
           {Object.entries(footerLinks).map(([section, links]) => (
             <ThemedView key={section} style={styles.section as ViewStyle}>
-              <ThemedText style={styles.sectionTitle as TextStyle}>{section}</ThemedText>
+              <ThemedText style={styles.title as TextStyle}>{section}</ThemedText>
               {links.map((link) => (
                 link.href.startsWith('http') ? (
                   <Pressable key={link.href} onPress={() => window.open(link.href, '_blank')}>
@@ -67,59 +127,4 @@ export default function Footer() {
       </View>
     </ThemedView>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    alignItems: 'center',
-    backgroundColor: '#000',
-    paddingVertical: 20,
-  },
-  footerImage: {
-    width: '100%',
-    height: '330%', // Adjust this value as needed
-    marginBottom: 20,
-  },
-  footerImageMobile: {
-    width: '100%',
-    height: '50%', // Adjust this value as needed
-    marginBottom: 20,
-  },
-  content: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  linksContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    marginBottom: 48,
-  },
-  section: {
-    minWidth: 160,
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  link: {
-    color: '#fff',
-    fontSize: 16,
-    marginBottom: 8,
-    opacity: 0.8,
-  },
-  bottom: {
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.1)',
-    paddingTop: 24,
-    alignItems: 'center',
-  },
-  copyright: {
-    color: '#fff',
-    opacity: 0.6,
-  },
-}); 
+} 

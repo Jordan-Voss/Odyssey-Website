@@ -81,7 +81,7 @@ export function AnimatedMenuIcon({ isOpen, onPress, color }: AnimatedMenuIconPro
     bar: {
       height: 2,
       width: '100%',
-      backgroundColor: '#000',
+      backgroundColor: 'red',
       borderRadius: 2,
     },
   });

@@ -4,10 +4,9 @@ import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { NavDropdown } from '@/components/NavDropdown';
 import { navItems } from '@/constants/navigation';
+import { useTheme } from '@/context/ThemeContext';
 
 interface DrawerProps {
   isOpen: boolean;
@@ -15,7 +14,7 @@ interface DrawerProps {
 }
 
 export function Drawer({ isOpen, onClose }: DrawerProps) {
-  const colorScheme = useColorScheme();
+  const { currentTheme } = useTheme();
   const [slideAnim] = useState(new Animated.Value(-300));
   const [fadeAnim] = useState(new Animated.Value(0));
 
@@ -44,14 +43,14 @@ export function Drawer({ isOpen, onClose }: DrawerProps) {
       }
     ]}>
       <TouchableOpacity
-        style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.5)' }]}
+        style={[StyleSheet.absoluteFill, { backgroundColor: currentTheme.colors.overlay }]}
         onPress={onClose}
       />
       <Animated.View
         style={[
           styles.drawer,
           {
-            backgroundColor: Colors[colorScheme ?? 'light'].background,
+            backgroundColor: currentTheme.colors.surface,
             transform: [{ translateX: slideAnim }],
             zIndex: 10000,
           },
