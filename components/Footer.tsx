@@ -12,7 +12,7 @@ const footerLinks = {
     { label: 'Careers', href: '/(pages)/careers/page' as const },
   ],
   Services: [
-    { label: 'Coaching', href: '/(pages)/coaching/page' as const },
+    { label: 'Coaching', href: '/(pages)/coaches/page' as const },
     { label: 'Programming', href: '/(pages)/programming/page' as const },
     { label: 'Workshops', href: '/(pages)/workshops/page' as const },
   ],

@@ -43,13 +43,13 @@ export function Header() {
     const normalizedPath = pathname.replace('/(pages)', '').replace(/\/$/, '');
     
     switch (normalizedPath) {
-      case '/coaching':
-        return 'COACHING';
-      case '/coaching/personal':
+      case '/coaches':
+        return 'coaches';
+      case '/coaches/personal':
         return 'PERSONAL TRAINING';
-      case '/coaching/programming':
+      case '/coaches/programming':
         return 'PROGRAMMING';
-      case '/coaching/technique':
+      case '/coaches/technique':
         return 'TECHNIQUE ANALYSIS';
       case '/about/page':
         return 'ABOUT';

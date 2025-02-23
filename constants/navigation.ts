@@ -1,7 +1,7 @@
 export interface NavItem {
   label: string;
   href?: string;
-  subItems?: readonly {
+  subItems?: {
     readonly label: string;
     readonly href: string;
   }[];
@@ -14,11 +14,11 @@ export const navItems = [
   },
   {
     label: 'Coaching',
-    href: '/coaching' as const,
+    href: '/coaches' as const,
     subItems: [
-      { label: 'Personal Training', href: '/coaching/personal' as const },
-      { label: 'Programming', href: '/coaching/programming' as const },
-      { label: 'Technique Analysis', href: '/coaching/technique' as const },
+      { label: 'Personal Training', href: '/coaches/personal' as const },
+      { label: 'Programming', href: '/coaches/programming' as const },
+      { label: 'Technique Analysis', href: '/coaches/technique' as const },
     ]
   },
   {
@@ -37,14 +37,13 @@ export const navItems = [
 
 export type Route = 
   | '/'
-  | '/coaching'
+  | '/coaches'
   | '/about'
   | '/contact'
-  | '/coaching/personal'
-  | '/coaching/programming'
-  | '/coaching/technique'
+  | '/coaches/personal'
+  | '/coaches/programming'
+  | '/coaches/technique'
   | '/about/team'
   | '/about/philosophy'
-  | '/(pages)/coaching/page'
   | '/(pages)/sign-up/page'; 
   
