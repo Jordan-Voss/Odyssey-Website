@@ -69,7 +69,7 @@ export default function AdminDashboard() {
       <View style={styles.grid}>
         <TouchableOpacity 
           style={styles.card}
-          onPress={() => router.push('/admin/coaches')}
+          onPress={() => router.push('/admin/coach')}
         >
           <ThemedText style={styles.cardTitle}>Manage Coaches</ThemedText>
           <ThemedText>Add, edit, or remove coaches</ThemedText>
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
 
         <TouchableOpacity 
           style={styles.card}
-          onPress={() => router.push('/admin/coaches')}
+          onPress={() => router.push('/admin/theme')}
         >
           <ThemedText style={styles.cardTitle}>Theme Settings</ThemedText>
           <ThemedText>Customize website appearance</ThemedText>

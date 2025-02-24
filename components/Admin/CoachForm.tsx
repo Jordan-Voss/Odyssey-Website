@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Pressable, View } from 'react-native';
+import { StyleSheet, Pressable, View, Image, Platform } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedInput } from '@/components/ThemedInput';
@@ -75,13 +75,19 @@ const styles = StyleSheet.create({
 });
 
 function SortableTextItem({ text, onRemove, id, styles }: { text: string; onRemove: () => void; id: string; styles: any }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+  const { attributes, listeners, setNodeRef } = useSortable({ id });
 
   return (
     <ThemedView style={styles.arrayField}>
-      <div ref={setNodeRef} {...attributes} {...listeners} style={{ cursor: 'grab' }}>
-        <ThemedText>⋮</ThemedText>
-      </div>
+      {Platform.OS === 'web' ? (
+        <div ref={setNodeRef} {...attributes} {...listeners} style={{ cursor: 'grab' }}>
+          <ThemedText>⋮</ThemedText>
+        </div>
+      ) : (
+        <View>
+          <ThemedText>⋮</ThemedText>
+        </View>
+      )}
       <ThemedText>{text}</ThemedText>
       <Pressable style={styles.removeButton} onPress={onRemove}>
         <ThemedText style={{ color: '#FFFFFF' }}>Remove</ThemedText>
@@ -91,26 +97,19 @@ function SortableTextItem({ text, onRemove, id, styles }: { text: string; onRemo
 }
 
 function SortableImageItem({ img, onRemove, id, styles }: { img: string; onRemove: () => void; id: string; styles: any }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
-
-  const style = {
-    ...styles.imagePreview,
-    transform: CSS.Transform.toString(transform),
-    transition: transition || undefined,
-    cursor: 'grab',
-    touchAction: 'none'
-  };
+  const { attributes, listeners, setNodeRef } = useSortable({ id });
 
   return (
     <View>
-      <img 
-        ref={setNodeRef} 
-        src={img} 
-        style={style}
-        alt="Additional" 
-        {...attributes} 
-        {...listeners}
-      />
+      {Platform.OS === 'web' ? (
+        <div ref={setNodeRef} {...attributes} {...listeners} style={{ cursor: 'grab' }}>
+          <Image source={{ uri: img }} style={styles.imagePreview} alt="Additional" />
+        </div>
+      ) : (
+        <View>
+          <Image source={{ uri: img }} style={styles.imagePreview} alt="Additional" />
+        </View>
+      )}
       <Pressable style={styles.removeButton} onPress={onRemove}>
         <ThemedText style={{ color: '#FFFFFF' }}>Remove</ThemedText>
       </Pressable>
@@ -120,7 +119,7 @@ function SortableImageItem({ img, onRemove, id, styles }: { img: string; onRemov
 
 export function CoachForm({ coach, onSave, onCancel }: CoachFormProps) {
   const { currentTheme } = useTheme();
-  const [formData, setFormData] = useState<CoachDetail>(coach || {
+  const defaultCoach = {
     name: '',
     role: '',
     image_url: '',
@@ -130,10 +129,11 @@ export function CoachForm({ coach, onSave, onCancel }: CoachFormProps) {
     full_bio: { intro: '', background: '', present: '' },
     achievements: [],
     images: [],
-    id: '',
     order_index: 0,
     show: true
-  });
+  } as unknown as CoachDetail;
+
+  const [formData, setFormData] = useState<CoachDetail>(coach || defaultCoach);
 
   const [newQualification, setNewQualification] = useState('');
   const [newAchievement, setNewAchievement] = useState('');
@@ -187,9 +187,6 @@ export function CoachForm({ coach, onSave, onCancel }: CoachFormProps) {
 
   async function handleSave() {
     try {
-      console.log('Saving coach data:', formData);
-      await updateCoach(formData);
-      console.log('Coach data saved successfully');
       onSave(formData);
     } catch (error) {
       console.error('Failed to save coach:', error);

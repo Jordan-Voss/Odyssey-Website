@@ -100,10 +100,13 @@ export function getPublicUrl(filename: string) {
 
 // Add this function to handle coach updates
 export async function updateCoach(coach: CoachDetail) {
+  if (!coach.id) {
+    throw new Error('Cannot update coach without ID');
+  }
+
   console.log('Starting coach update for ID:', coach.id);
 
   try {
-    // Prepare all fields for update
     const updateData = {
       name: coach.name,
       role: coach.role,
@@ -119,31 +122,17 @@ export async function updateCoach(coach: CoachDetail) {
       updated_at: new Date().toISOString()
     };
 
-    // Perform the update
     const { error } = await supabase
       .from('coaches')
       .update(updateData)
-      .eq('id', coach.id);
+      .eq('id', coach.id);  // Use the actual coach ID
 
     if (error) {
       console.error('Update error:', error);
       throw error;
     }
 
-    // Verify and return the updated record
-    const { data: verified, error: fetchError } = await supabase
-      .from('coaches')
-      .select('*')
-      .eq('id', coach.id)
-      .single();
-
-    if (fetchError) {
-      throw fetchError;
-    }
-
-    console.log('Update successful:', verified);
-    return verified;
-
+    return coach;
   } catch (error) {
     console.error('Error in updateCoach:', error);
     throw error;
