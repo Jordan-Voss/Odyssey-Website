@@ -121,8 +121,10 @@ export default function CoachingPage() {
       flexGrow: 1,
       display: 'flex',
       flexDirection: 'column',
-      borderWidth: 1,
-      borderColor: currentTheme.colors.border,
+      borderLeftWidth: 1,
+      borderRightWidth: 1,
+      borderBottomWidth: 1,
+      borderColor: currentTheme.colors.primary,
       borderBottomLeftRadius: 12,
       borderBottomRightRadius: 12,
     },
@@ -196,7 +198,7 @@ export default function CoachingPage() {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: currentTheme.colors.surface,
+      backgroundColor: currentTheme.colors.overlay,
       opacity: 0.3,
     },
     heroContent: {
@@ -230,7 +232,7 @@ export default function CoachingPage() {
       marginTop: 16,
     },
     ctaButtonText: {
-      color: '#FFFFFF',
+      color: currentTheme.colors.text,
       fontSize: 18,
       fontWeight: 'bold',
     },
@@ -259,7 +261,7 @@ export default function CoachingPage() {
       backgroundColor: currentTheme.colors.surface,
       borderRadius: 12,
       borderWidth: 1,
-      borderColor: currentTheme.colors.border,
+      borderColor: currentTheme.colors.primary,
     },
     serviceTitle: {
       fontSize: 24,
@@ -279,7 +281,7 @@ export default function CoachingPage() {
       marginTop: 16,
     },
     readMoreText: {
-      color: '#FFFFFF',
+      color: currentTheme.colors.text,
       fontSize: 14,
       fontWeight: 'bold',
     },

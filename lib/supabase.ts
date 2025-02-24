@@ -224,6 +224,7 @@ export interface ThemeColors {
   warning: string;
   info: string;
   icon: string;
+  image_overlay: string;
 }
 
 export interface Theme {

@@ -61,6 +61,7 @@ const defaultTheme: Theme = {
       shadow: 'rgba(0,0,0,0.3)',
     },
     icon: '#FFFFFF',
+    image_overlay: 'rgba(0,0,0,0.3)',
   },
   is_active: true
 };
