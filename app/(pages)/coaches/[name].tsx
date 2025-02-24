@@ -34,9 +34,25 @@ export default function CoachProfile() {
         flex: 1,
         backgroundColor: currentTheme.colors.background,
     },
-    hero: {
+    heroSection: {
+        position: 'relative',
+        height: 600,
+        width: '100%',
+    },
+    heroImage: {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+    },
+    heroOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.5)',
         padding: 60,
-        backgroundColor: currentTheme.colors.surface,
+        justifyContent: 'center',
         alignItems: 'center',
     },
     quote: {
@@ -44,14 +60,16 @@ export default function CoachProfile() {
         fontStyle: 'italic',
         textAlign: 'center',
         maxWidth: 800,
+        color: '#FFFFFF',
         marginBottom: 40,
-        color: currentTheme.colors.text,
     },
     content: {
         maxWidth: 1200,
         width: '100%',
         marginHorizontal: 'auto',
         padding: 40,
+        position: 'relative',
+        zIndex: 1,
     },
     section: {
         marginBottom: 60,
@@ -73,8 +91,9 @@ export default function CoachProfile() {
         flexWrap: 'wrap',
         gap: 20,
         marginTop: 40,
+        justifyContent: 'center',
     },
-    image: {
+    galleryImage: {
         width: 280,
         height: 280,
         borderRadius: 12,
@@ -84,19 +103,34 @@ export default function CoachProfile() {
     if (!coach) return null;
 
     return (
-      <ScrollView style={styles.container}>
-        <ThemedView style={styles.hero}>
-          <ThemedText style={styles.quote}>{coach.full_bio.intro}</ThemedText>
+      <ScrollView 
+        style={styles.container}
+        contentContainerStyle={{ paddingTop: 0 }}
+      >
+        <ThemedView style={styles.heroSection}>
+          <Image 
+            source={{ uri: coach.images[0] }} 
+            style={styles.heroImage}
+          />
+          <ThemedView style={styles.heroOverlay}>
+            <ThemedText style={styles.quote}>{coach.full_bio.intro}</ThemedText>
+          </ThemedView>
         </ThemedView>
+        
         <ThemedView style={styles.content}>
           <ThemedView style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Biography</ThemedText>
             <ThemedText style={styles.text}>{coach.full_bio.background}</ThemedText>
             <ThemedText style={styles.text}>{coach.full_bio.present}</ThemedText>
           </ThemedView>
+          
           <ThemedView style={styles.imageGrid}>
-            {coach.images.map((image: string, index: number) => (
-              <Image key={index} source={{ uri: image }} style={styles.image} />
+            {coach.images.slice(1).map((image: string, index: number) => (
+              <Image 
+                key={index} 
+                source={{ uri: image }} 
+                style={styles.galleryImage} 
+              />
             ))}
           </ThemedView>
         </ThemedView>

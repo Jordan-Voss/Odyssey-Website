@@ -41,7 +41,9 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
   
   const activeColor = currentTheme.colors.primary;
 
-  const [isOpen, setIsOpen] = useState(() => {
+    const [isOpen, setIsOpen] = useState(false);
+
+  const [isOpenMobile, setIsOpenMobile] = useState(() => {
     if (hasSubItems(item)) {
       return item.subItems.some(subItem => subItem.href === pathname);
     }
