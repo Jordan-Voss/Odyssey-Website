@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Stack, usePathname } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ThemeProvider } from '@/context/ThemeContext';
 import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 
-export default function AdminLayout() {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
 
@@ -57,13 +56,11 @@ export default function AdminLayout() {
 
   return (
     <SafeAreaProvider>
-      <ThemeProvider>
-        <Stack
-          screenOptions={{ 
-            headerShown: false,
-          }}
-        />
-      </ThemeProvider>
+      <Stack
+        screenOptions={{ 
+          headerShown: false,
+        }}
+      />
     </SafeAreaProvider>
   );
 }

@@ -1,11 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
+import { updateTheme, Theme } from '@/lib/supabase';
 
 export default function ThemeManager() {
-  const { currentTheme, setThemeById, availableThemes } = useTheme();
+  const { currentTheme, setThemeById, availableThemes, loadThemes } = useTheme();
+  const [editingTheme, setEditingTheme] = useState<Theme | null>(null);
+
+  async function handleSave(theme: Theme) {
+    const success = await updateTheme(theme);
+    if (success) {
+      await loadThemes();
+      setEditingTheme(null);
+    }
+  }
 
   return (
     <ThemedView style={styles.container}>

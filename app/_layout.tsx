@@ -5,6 +5,9 @@ import { StatusBar } from 'expo-status-bar';
 import { Pressable, useWindowDimensions, StyleSheet } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ThemeProvider } from '@/context/ThemeContext';
+import { useTheme } from '@/context/ThemeContext';
+import { useFonts } from 'expo-font';
 
 import { ThemedView } from '@/components/ThemedView';
 import { Drawer } from '@/components/Drawer';
@@ -12,9 +15,6 @@ import { AnimatedMenuIcon } from '@/components/AnimatedMenuIcon';
 import { navItems } from '@/constants/navigation';
 import { NavDropdown } from '@/components/NavDropdown';
 import { Header } from '@/components/Header';
-import { ThemeProvider as CustomThemeProvider } from '@/context/ThemeContext';
-import { useTheme } from '@/context/ThemeContext';
-import { useFonts } from 'expo-font';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -26,29 +26,37 @@ interface LayoutContentProps {
   setIsDrawerOpen: (open: boolean) => void;
 }
 
-export default function Layout() {
+export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
-
-  const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
-  const isMobile = width < 768;
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   if (!loaded) {
     return null;
   }
 
   return (
-    <CustomThemeProvider>
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+
+function AppContent() {
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  return (
+    <SafeAreaProvider>
       <LayoutContent 
         insets={insets}
         isMobile={isMobile}
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
       />
-    </CustomThemeProvider>
+    </SafeAreaProvider>
   );
 }
 
@@ -83,40 +91,38 @@ function LayoutContent({ insets, isMobile, isDrawerOpen, setIsDrawerOpen }: Layo
   });
 
   return (
-    <SafeAreaProvider style={{ backgroundColor: currentTheme.colors.background }}>
-      <ThemedView style={[styles.container, { backgroundColor: currentTheme.colors.background }]}>
-        <ThemedView style={styles.header}>
-          <Header />
-          {isMobile ? (
-            <Pressable onPress={() => setIsDrawerOpen(true)}>
-              <AnimatedMenuIcon 
-                isOpen={isDrawerOpen}
-                onPress={() => setIsDrawerOpen(!isDrawerOpen)}
-                color={currentTheme.colors.text}
+    <ThemedView style={[styles.container, { backgroundColor: currentTheme.colors.background }]}>
+      <ThemedView style={styles.header}>
+        <Header />
+        {isMobile ? (
+          <Pressable onPress={() => setIsDrawerOpen(true)}>
+            <AnimatedMenuIcon 
+              isOpen={isDrawerOpen}
+              onPress={() => setIsDrawerOpen(!isDrawerOpen)}
+              color={currentTheme.colors.text}
+            />
+          </Pressable>
+        ) : (
+          <ThemedView style={{ flexDirection: 'row', gap: 32 }}>
+            {navItems.map(item => (
+              <NavDropdown
+                key={item.label}
+                item={item}
+                style={linkStyle}
               />
-            </Pressable>
-          ) : (
-            <ThemedView style={{ flexDirection: 'row', gap: 32 }}>
-              {navItems.map(item => (
-                <NavDropdown
-                  key={item.label}
-                  item={item}
-                  style={linkStyle}
-                />
-              ))}
-            </ThemedView>
-          )}
-        </ThemedView>
-        {isMobile && <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />}
-        <ThemedView style={{ flex: 1 }}>
-          <Stack
-            screenOptions={{ 
-              headerShown: false,
-              // contentStyle: { backgroundColor: 'green' }
-            }} 
-          />
-        </ThemedView>
+            ))}
+          </ThemedView>
+        )}
       </ThemedView>
-    </SafeAreaProvider>
+      {isMobile && <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />}
+      <ThemedView style={{ flex: 1 }}>
+        <Stack
+          screenOptions={{ 
+            headerShown: false,
+            // contentStyle: { backgroundColor: 'green' }
+          }} 
+        />
+      </ThemedView>
+    </ThemedView>
   );
 }

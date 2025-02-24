@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { SUPABASE_URL, SUPABASE_KEY } from '@/config/env';
 import { CoachDetail } from '@/types/coach';
+import { themes } from '@/constants/Themes';
 
 // Add logging to verify configuration
 console.log('Supabase URL:', SUPABASE_URL?.slice(0, 20) + '...');  // Don't log full URL
@@ -163,4 +164,166 @@ export async function testConnection() {
 // Call this when app starts
 testConnection().then(success => {
   console.log('Initial connection test:', success);
-}); 
+});
+
+export interface ThemeColors {
+  // Main colors
+  primary: string;
+  secondary: string;
+  
+  // Backgrounds
+  background: string;
+  surface: string;
+  surfaceAlt: string;
+  
+  // Text
+  text: string;
+  textSecondary: string;
+  textInverse: string;
+  priceText: string;
+  statNumber: string;
+  headerText: string;
+  
+  // Interactive
+  button: {
+    primary: {
+      background: string;
+      text: string;
+      hover: string;
+      active: string;
+    },
+    secondary: {
+      background: string;
+      text: string;
+      hover: string;
+      active: string;
+    },
+    cta: {
+      background: string;
+      text: string;
+      hover: string;
+      active: string;
+    }
+  },
+  
+  // UI Elements
+  border: string;
+  shadow: string;
+  overlay: string;
+  
+  // Cards & Sections
+  card: {
+    background: string;
+    border: string;
+    shadow: string;
+  },
+  
+  // Status
+  error: string;
+  success: string;
+  warning: string;
+  info: string;
+  icon: string;
+}
+
+export interface Theme {
+  id: string;
+  name: string;
+  colors: ThemeColors;
+  is_active: boolean;
+}
+
+export async function getActiveTheme(): Promise<Theme | null> {
+  const { data, error } = await supabase
+    .from('themes')
+    .select('*')
+    .eq('is_active', true)
+    .single();
+
+  if (error) {
+    console.error('Error fetching active theme:', error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function getAllThemes(): Promise<Theme[]> {
+  const { data, error } = await supabase
+    .from('themes')
+    .select('*')
+    .order('name');
+
+  if (error) {
+    console.error('Error fetching themes:', error);
+    return [];
+  }
+
+  return data;
+}
+
+export async function setActiveTheme(themeId: string): Promise<boolean> {
+  try {
+    // First, deactivate all themes
+    await supabase
+      .from('themes')
+      .update({ is_active: false })
+      .neq('id', themeId);
+
+    // Then activate the selected theme
+    const { error } = await supabase
+      .from('themes')
+      .update({ is_active: true })
+      .eq('id', themeId);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error setting active theme:', error);
+    return false;
+  }
+}
+
+export async function updateTheme(theme: Theme): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('themes')
+      .update({
+        name: theme.name,
+        colors: theme.colors,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', theme.id);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error updating theme:', error);
+    return false;
+  }
+}
+
+export async function migrateThemes(): Promise<void> {
+  try {
+    // Clear existing themes
+    await supabase.from('themes').delete().neq('id', '');
+
+    // Map themes to the correct structure
+    const themesToInsert = themes.map(theme => ({
+      name: theme.name,
+      colors: theme.colors,
+      is_active: theme.id === themes[0].id
+    }));
+
+    // Insert all themes at once
+    const { error } = await supabase
+      .from('themes')
+      .insert(themesToInsert)
+      .select();
+
+    if (error) throw error;
+    console.log('Themes migrated successfully');
+  } catch (error) {
+    console.error('Error migrating themes:', error);
+  }
+} 
