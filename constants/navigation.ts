@@ -14,8 +14,8 @@ export const navItems = [
   },
   {
     label: 'Coaching',
-    href: '/coaches' as const,
     subItems: [
+      { label: 'Coaches', href: '/coaches' as const },
       { label: 'Personal Training', href: '/coaches/personal' as const },
       { label: 'Programming', href: '/coaches/programming' as const },
       { label: 'Technique Analysis', href: '/coaches/technique' as const },

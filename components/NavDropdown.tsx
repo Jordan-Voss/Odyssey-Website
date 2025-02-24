@@ -84,13 +84,17 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
       width: '100%',
     },
     dropdownContainer: {
+      position: 'relative',
       width: '100%',
+      backgroundColor: 'red',
+      zIndex: 5,
     },
     dropdown: {
       position: 'relative',
       width: '100%',
       paddingLeft: 16,
       marginTop: 4,
+      backgroundColor: 'blue',
     },
     link: {
       flexDirection: 'row',
@@ -98,9 +102,12 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
       justifyContent: 'space-between',
       paddingVertical: 12,
       borderColor: currentTheme.colors.border,
+      position: 'relative',
     },
     mainLink: {
       flex: 1,
+      position: 'relative',
+      zIndex: 2,
     },
     linkText: {
       fontSize: 16,
@@ -116,11 +123,26 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
       fontSize: 14,
       color: currentTheme.colors.textSecondary,
     },
+    hoverArea: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      // zIndex: 1,
+    },
+    mobileSubItems: {
+      paddingLeft: 20,
+    },
+    mobileSubItem: {
+      paddingVertical: 12,
+    },
     desktopDropdown: {
       position: 'absolute',
       top: '100%',
       left: 0,
       minWidth: 200,
+      width: '100%',
       borderRadius: 8,
       backgroundColor: currentTheme.colors.background,
       borderColor: currentTheme.colors.border,
@@ -132,20 +154,18 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
       elevation: 3,
       zIndex: 1000,
     },
-    hoverArea: {
+    dropdownWrapper: {
       position: 'relative',
+      width: '100%',
     },
-    mobileSubItems: {
-      paddingLeft: 20,
-    },
-    mobileSubItem: {
-      paddingVertical: 12,
+    hoverableText: {
+      cursor: 'pointer',
     },
   });
 
   if (isMobile) {
     return (
-      <View style={{ backgroundColor: 'red'}}>
+      <View style={{ backgroundColor: currentTheme.colors.background }}>
         {hasSubItems(item) ? (
           <>
             <Pressable 
@@ -215,45 +235,35 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
   return (
     <ThemedView style={[styles.container, isMobile && styles.mobileContainer]}>
       <Pressable 
-        style={styles.hoverArea}
+        style={styles.dropdownWrapper}
         onHoverIn={() => !isMobile && setIsOpen(true)}
         onHoverOut={() => !isMobile && setIsOpen(false)}
       >
         <ThemedView style={[styles.link, style]}>
-          <Link 
-            href={item.href as any}
-            onPress={onClose}
-            style={styles.mainLink}
-          >
-            <ThemedText style={[
-              styles.linkText, 
-              (isActive(item.href) || isParentActive) && { color: activeColor }
-            ]}>
+          {item.href ? (
+            <Link 
+              href={item.href as any}
+              onPress={onClose}
+              style={styles.mainLink}
+            >
+              <ThemedText style={[styles.linkText, isActive(item.href) && { color: activeColor }]}>
+                {item.label}
+              </ThemedText>
+            </Link>
+          ) : (
+            <ThemedText 
+              style={[
+                styles.linkText, 
+                styles.hoverableText,
+                isParentActive && { color: activeColor }
+              ]}
+            >
               {item.label}
             </ThemedText>
-          </Link>
-          {isMobile && (
-            <Pressable onPress={() => setIsOpen(!isOpen)}>
-              <Animated.View style={{
-                transform: [{
-                  rotate: animation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ['0deg', '180deg'],
-                  })
-                }]
-              }}>
-                <Ionicons name="chevron-down" size={18} color={currentTheme.colors.text} />
-              </Animated.View>
-            </Pressable>
           )}
         </ThemedView>
         {!isMobile && isOpen && hasSubItems(item) && (
-          <ThemedView 
-            style={[
-              styles.desktopDropdown,
-              { backgroundColor: currentTheme.colors.background }
-            ]}
-          >
+          <ThemedView style={styles.desktopDropdown}>
             {item.subItems.map((subItem) => (
               <Link
                 key={subItem.href}

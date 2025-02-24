@@ -99,7 +99,7 @@ function LayoutContent({ insets, isMobile, isDrawerOpen, setIsDrawerOpen }: Layo
             <ThemedView style={{ flexDirection: 'row', gap: 32 }}>
               {navItems.map(item => (
                 <NavDropdown
-                  key={item.href}
+                  key={item.label}
                   item={item}
                   style={linkStyle}
                 />
