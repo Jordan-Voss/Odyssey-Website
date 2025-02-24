@@ -2,8 +2,12 @@ import { createClient } from '@supabase/supabase-js';
 import { SUPABASE_URL, SUPABASE_KEY } from '@/config/env';
 import { CoachDetail } from '@/types/coach';
 
+// Add logging to verify configuration
+console.log('Supabase URL:', SUPABASE_URL?.slice(0, 20) + '...');  // Don't log full URL
+console.log('Supabase Key exists:', !!SUPABASE_KEY);
+
 if (!SUPABASE_URL || !SUPABASE_KEY) {
-  throw new Error('Missing Supabase configuration. Check your environment variables.');
+  throw new Error('Missing Supabase configuration');
 }
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -144,4 +148,30 @@ export async function updateCoach(coach: CoachDetail) {
     console.error('Error in updateCoach:', error);
     throw error;
   }
-} 
+}
+
+// Update the connection test function
+export async function testConnection() {
+  try {
+    const { data, error } = await supabase
+      .from('admin_users')
+      .select('id');  // Just select id instead of count(*)
+    
+    console.log('Supabase connection test:', {
+      success: !error,
+      data,
+      error: error?.message,
+      count: data?.length || 0
+    });
+    
+    return !error;
+  } catch (e) {
+    console.error('Connection test failed:', e);
+    return false;
+  }
+}
+
+// Call this when app starts
+testConnection().then(success => {
+  console.log('Initial connection test:', success);
+}); 

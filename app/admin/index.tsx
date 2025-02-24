@@ -1,64 +1,92 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, Pressable } from 'react-native';
-import { useTheme } from '@/context/ThemeContext';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
+import { supabase } from '@/lib/supabase';
+import { router } from 'expo-router';
 
-export default function AdminPage() {
-  const { currentTheme, setThemeById, availableThemes } = useTheme();
-  const [password, setPassword] = useState('');
+export default function AdminDashboard() {
+  const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const handlePasswordSubmit = () => {
-    // TODO: Replace with actual API call
-    if (password === 'admin123') {
-      setIsAuthenticated(true);
-    }
-  };
+  useEffect(() => {
+    checkAuth();
+  }, []);
 
-  if (!isAuthenticated) {
+  async function checkAuth() {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.replace('/admin/login');
+        return;
+      }
+      
+      // Verify admin status
+      const { data: profile } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (!profile) {
+        await supabase.auth.signOut();
+        router.replace('/admin/login');
+        return;
+      }
+
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      router.replace('/admin/login');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.replace('/admin/login');
+  }
+
+  if (isLoading) {
     return (
       <ThemedView style={styles.container}>
-        <View style={styles.authContainer}>
-          <ThemedText style={styles.title}>Admin Access</ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          <Pressable 
-            style={styles.authButton}
-            onPress={handlePasswordSubmit}
-          >
-            <ThemedText style={styles.buttonText}>Login</ThemedText>
-          </Pressable>
-        </View>
+        <ThemedText>Loading...</ThemedText>
       </ThemedView>
     );
   }
 
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <ThemedView style={styles.container}>
-      <View style={styles.content}>
-        <ThemedText style={styles.title}>Theme Manager</ThemedText>
-        <View style={styles.themeList}>
-          {availableThemes.map(theme => (
-            <Pressable
-              key={theme.id}
-              style={[
-                styles.themeButton,
-                { backgroundColor: theme.colors.primary },
-                currentTheme.id === theme.id && styles.activeTheme
-              ]}
-              onPress={() => setThemeById(theme.id)}
-            >
-              <ThemedText style={styles.themeName}>{theme.name}</ThemedText>
-            </Pressable>
-          ))}
-        </View>
+      <ThemedText style={styles.title}>Admin Dashboard</ThemedText>
+      
+      <View style={styles.grid}>
+        <TouchableOpacity 
+          style={styles.card}
+          onPress={() => router.push('/admin/coaches')}
+        >
+          <ThemedText style={styles.cardTitle}>Manage Coaches</ThemedText>
+          <ThemedText>Add, edit, or remove coaches</ThemedText>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.card}
+          onPress={() => router.push('/admin/coaches')}
+        >
+          <ThemedText style={styles.cardTitle}>Theme Settings</ThemedText>
+          <ThemedText>Customize website appearance</ThemedText>
+        </TouchableOpacity>
       </View>
+
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <ThemedText style={styles.buttonText}>Logout</ThemedText>
+      </TouchableOpacity>
     </ThemedView>
   );
 }
@@ -68,57 +96,36 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  content: {
-    maxWidth: 600,
-    width: '100%',
-    marginHorizontal: 'auto',
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 20,
+    marginTop: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: 'center',
   },
-  authContainer: {
-    maxWidth: 400,
-    width: '100%',
-    marginHorizontal: 'auto',
-    gap: 16,
+  cardTitle: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  card: {
     padding: 20,
     borderRadius: 8,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: '#f5f5f5',
+    flex: 1,
+    minWidth: 250,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#CCC',
-    padding: 12,
-    borderRadius: 4,
-    backgroundColor: '#FFF',
-  },
-  authButton: {
-    backgroundColor: '#333',
-    padding: 12,
-    borderRadius: 4,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 16,
-  },
-  themeList: {
-    gap: 16,
-  },
-  themeButton: {
-    padding: 16,
+  logoutButton: {
+    backgroundColor: '#dc3545',
+    padding: 15,
     borderRadius: 8,
     alignItems: 'center',
+    marginTop: 20,
+    maxWidth: 200,
   },
-  activeTheme: {
-    borderWidth: 2,
-    borderColor: '#FFF',
-  },
-  themeName: {
-    color: '#FFF',
-    fontSize: 18,
+  buttonText: {
+    color: '#FFFFFF',
   },
 }); 
