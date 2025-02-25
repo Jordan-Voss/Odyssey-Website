@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, Image, Pressable } from 'react-native';
+import { StyleSheet, ScrollView, Image, Pressable, ViewStyle, TextStyle, ImageStyle } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/context/ThemeContext';
@@ -77,28 +77,28 @@ export default function CoachingPage() {
       flex: 1,
       backgroundColor: currentTheme.colors.background,
       minHeight: '100%',
-    },
+    } as ViewStyle,
     content: {
       // maxWidth: 1200,
       width: '100%',
       marginHorizontal: 'auto',
       padding: 40,
       flex: 1,
-    },
+    } as ViewStyle,
     title: {
       fontSize: 48,
       fontWeight: 'bold',
       textAlign: 'center',
       marginBottom: 40,
       color: currentTheme.colors.text,
-    },
+    } as TextStyle,
     coachesGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'center',
       gap: 40,
       width: '100%',
-    },
+    } as ViewStyle,
     coachCard: {
       width: 280,
       minWidth: 280,
@@ -108,14 +108,14 @@ export default function CoachingPage() {
       borderRadius: 12,
       display: 'flex',
       flexDirection: 'column',
-    },
+    } as ViewStyle,
     coachImage: {
       width: '100%',
       height: 350,
       objectFit: 'cover',
       borderTopLeftRadius: 12,
       borderTopRightRadius: 12,
-    },
+    } as ImageStyle,
     coachInfo: {
       padding: 24,
       flexGrow: 1,
@@ -127,51 +127,51 @@ export default function CoachingPage() {
       borderColor: currentTheme.colors.primary,
       borderBottomLeftRadius: 12,
       borderBottomRightRadius: 12,
-    },
+    } as ViewStyle,
     coachInfoTop: {
       gap: 16,
       flex: 1,
-    },
+    } as ViewStyle,
     coachInfoBottom: {
       gap: 16,
-    },
+    } as ViewStyle,
     coachName: {
       fontSize: 24,
       fontWeight: 'bold',
       color: currentTheme.colors.text,
-    },
+    } as TextStyle,
     coachRole: {
       fontSize: 18,
       color: currentTheme.colors.textSecondary,
       marginBottom: 8,
-    },
+    } as TextStyle,
     coachBio: {
       fontSize: 16,
       color: currentTheme.colors.textSecondary,
       lineHeight: 24,
-    },
+    } as TextStyle,
     qualifications: {
       marginTop: 16,
       gap: 8,
-    },
+    } as ViewStyle,
     qualification: {
       fontSize: 14,
       color: currentTheme.colors.textSecondary,
-    },
+    } as TextStyle,
     socialLinks: {
       flexDirection: 'row',
       gap: 16,
       marginTop: 16,
-    },
+    } as ViewStyle,
     socialLink: {
       padding: 8,
       borderRadius: 8,
       backgroundColor: currentTheme.colors.surfaceAlt,
-    },
+    } as ViewStyle,
     socialLinkText: {
       color: currentTheme.colors.text,
       fontSize: 14,
-    },
+    } as TextStyle,
     hero: {
       width: '100%',
       minHeight: 500,
@@ -180,7 +180,7 @@ export default function CoachingPage() {
       justifyContent: 'center',
       alignItems: 'center',
       padding: 40,
-    },
+    } as ViewStyle,
     heroBackground: {
       position: 'absolute',
       top: '-50%',
@@ -191,16 +191,16 @@ export default function CoachingPage() {
       height: '150%',
       objectFit: 'fill',
       opacity: 1,
-    },
+    } as ImageStyle,
     heroOverlay: {
       position: 'absolute',
       top: 0,
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: currentTheme.colors.overlay,
+      backgroundColor: currentTheme.colors.overlay.background,
       opacity: 0.3,
-    },
+    } as ViewStyle,
     heroContent: {
       maxWidth: 800,
       alignItems: 'center',
@@ -211,42 +211,42 @@ export default function CoachingPage() {
       padding: 40,
       borderRadius: 12,
       opacity: 0.9,
-    },
+    } as ViewStyle,
     heroTitle: {
       fontSize: 64,
       fontWeight: 'bold',
       textAlign: 'center',
       color: currentTheme.colors.text,
-    },
+    } as TextStyle,
     heroSubtitle: {
       fontSize: 20,
       textAlign: 'center',
       color: currentTheme.colors.textSecondary,
       lineHeight: 32,
-    },
+    } as TextStyle,
     ctaButton: {
       backgroundColor: currentTheme.colors.primary,
       paddingVertical: 16,
       paddingHorizontal: 32,
       borderRadius: 8,
       marginTop: 16,
-    },
+    } as ViewStyle,
     ctaButtonText: {
       color: currentTheme.colors.text,
       fontSize: 18,
       fontWeight: 'bold',
-    },
+    } as TextStyle,
     servicesSection: {
       padding: 80,
       backgroundColor: currentTheme.colors.background,
-    },
+    } as ViewStyle,
     sectionTitle: {
       fontSize: 36,
       fontWeight: 'bold',
       textAlign: 'center',
       marginBottom: 48,
       color: currentTheme.colors.text,
-    },
+    } as TextStyle,
     servicesGrid: {
       flexDirection: 'row',
       flexWrap: 'wrap',
@@ -254,7 +254,7 @@ export default function CoachingPage() {
       gap: 32,
       maxWidth: 1200,
       marginHorizontal: 'auto',
-    },
+    } as ViewStyle,
     serviceCard: {
       width: 350,
       padding: 32,
@@ -262,29 +262,29 @@ export default function CoachingPage() {
       borderRadius: 12,
       borderWidth: 1,
       borderColor: currentTheme.colors.primary,
-    },
+    } as ViewStyle,
     serviceTitle: {
       fontSize: 24,
       fontWeight: 'bold',
       marginBottom: 16,
       color: currentTheme.colors.text,
-    },
+    } as TextStyle,
     serviceDescription: {
       fontSize: 16,
       color: currentTheme.colors.textSecondary,
       lineHeight: 24,
-    },
+    } as TextStyle,
     readMoreLink: {
       padding: 8,
       borderRadius: 8,
       backgroundColor: currentTheme.colors.primary,
       marginTop: 16,
-    },
+    } as ViewStyle,
     readMoreText: {
       color: currentTheme.colors.text,
       fontSize: 14,
       fontWeight: 'bold',
-    },
+    } as TextStyle,
   });
 
   return (

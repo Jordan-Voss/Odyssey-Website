@@ -12,56 +12,167 @@ interface ThemeContextType {
 const defaultTheme: Theme = {
   id: 'default',
   name: 'Default',
+ 
   colors: {
     primary: '#1E90FF',
     secondary: '#000000',
+    tertiary: '#666666',
     
     background: '#000000',
     surface: '#000000',
     surfaceAlt: '#000000',
+    surfaceHover: '#1A1A1A',
     
     text: '#FFFFFF',
     textSecondary: '#AAAAAA',
+    textTertiary: '#999999',
     textInverse: '#000000',
-    priceText: '#FFFFFF',
-    statNumber: '#FFFFFF',
-    headerText: '#FFFFFF',
+    textDisabled: '#666666',
+    link: '#1E90FF',
+    linkHover: '#1570CD',
+    
+    divider: '#333333',
+    
     button: {
       primary: {
         background: '#000000',
         text: '#FFFFFF',
-        hover: '#1A1A1A',
-        active: '#333333',
+        border: '#000000',
+        hover: {
+          background: '#1A1A1A',
+          text: '#FFFFFF',
+          border: '#1A1A1A'
+        },
+        active: {
+          background: '#333333',
+          text: '#FFFFFF',
+          border: '#333333'
+        },
+        disabled: {
+          background: '#666666',
+          text: '#FFFFFF',
+          border: '#666666'
+        }
       },
       secondary: {
         background: '#000000',
         text: '#FFFFFF',
-        hover: '#1A1A1A',
-        active: '#333333',
+        border: '#000000',
+        hover: {
+          background: '#1A1A1A',
+          text: '#FFFFFF',
+          border: '#1A1A1A'
+        },
+        active: {
+          background: '#333333',
+          text: '#FFFFFF',
+          border: '#333333'
+        },
+        disabled: {
+          background: '#666666',
+          text: '#FFFFFF',
+          border: '#666666'
+        }
       },
       cta: {
         background: '#000000',
         text: '#FFFFFF',
-        hover: '#1A1A1A',
-        active: '#333333',
+        border: '#000000',
+        hover: {
+          background: '#1A1A1A',
+          text: '#FFFFFF',
+          border: '#1A1A1A'
+        },
+        active: {
+          background: '#333333',
+          text: '#FFFFFF',
+          border: '#333333'
+        },
+        disabled: {
+          background: '#666666',
+          text: '#FFFFFF',
+          border: '#666666'
+        }
       }
     },
     
-    border: '#333333',
     shadow: '#000000',
-    overlay: 'rgba(0,0,0,0.5)',
+    overlay: {
+      background: 'rgba(0,0,0,0.5)',
+      text: '#FFFFFF'
+    },
     
-    error: '#FF5252',
-    success: '#69F0AE',
-    warning: '#FFB74D',
-    info: '#64B5F6',
+    status: {
+      error: {
+        background: '#FF5252',
+        text: '#FFFFFF',
+        border: '#FF5252'
+      },
+      success: {
+        background: '#69F0AE',
+        text: '#000000',
+        border: '#69F0AE'
+      },
+      warning: {
+        background: '#FFB74D',
+        text: '#000000',
+        border: '#FFB74D'
+      },
+      info: {
+        background: '#64B5F6',
+        text: '#FFFFFF',
+        border: '#64B5F6'
+      }
+    },
     card: {
       background: '#1E1E1E',
       border: '#333333',
       shadow: 'rgba(0,0,0,0.3)',
+      hover: {
+        background: '#2A2A2A',
+        border: '#444444',
+        shadow: 'rgba(0,0,0,0.4)'
+      }
     },
-    icon: '#FFFFFF',
-    image_overlay: 'rgba(0,0,0,0.3)',
+    icon: {
+      primary: '#FFFFFF',
+      secondary: '#AAAAAA',
+      disabled: '#666666'
+    },
+    input: {
+      background: '#1A1A1A',
+      text: '#FFFFFF',
+      border: '#333333',
+      placeholder: '#999999',
+      focus: {
+        background: '#2A2A2A',
+        border: '#1E90FF',
+        shadow: 'rgba(30,144,255,0.2)'
+      },
+      error: {
+        background: '#FF000010',
+        border: '#FF0000',
+        text: '#FF0000'
+      }
+    },
+    nav: {
+      background: '#1A1A1A',
+      text: '#FFFFFF',
+      hover: {
+        background: '#2A2A2A',
+        text: '#1E90FF'
+      },
+      active: {
+        background: '#2A2A2A',
+        text: '#1E90FF',
+        border: '#1E90FF'
+      }
+    },
+    tooltip: {
+      background: '#000000',
+      text: '#FFFFFF',
+      border: '#333333'
+    },
   },
   is_active: true
 };

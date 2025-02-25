@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   removeButton: {
     padding: 4,
-    backgroundColor: currentTheme.colors.error,
+    backgroundColor: currentTheme.colors.status.error.background,
     borderRadius: 4,
     marginLeft: 8,
   },
@@ -456,7 +456,11 @@ export function CoachForm({ coach, onSave, onCancel }: CoachFormProps) {
           }}
           style={[
             styles.button,
-            { backgroundColor: formData.show ? currentTheme.colors.primary : currentTheme.colors.error }
+            { 
+              backgroundColor: formData.show 
+                ? currentTheme.colors.status.success.background 
+                : currentTheme.colors.status.error.background 
+            }
           ]}
         >
           <ThemedText style={{ color: '#FFFFFF' }}>
@@ -467,7 +471,10 @@ export function CoachForm({ coach, onSave, onCancel }: CoachFormProps) {
 
       <ThemedView style={styles.buttons}>
         <Pressable 
-          style={[styles.button, { backgroundColor: currentTheme.colors.error }]}
+          style={[
+            styles.button, 
+            { backgroundColor: currentTheme.colors.status.error.background }
+          ]}
           onPress={onCancel}
         >
           <ThemedText style={{ color: '#FFFFFF' }}>Cancel</ThemedText>

@@ -83,7 +83,7 @@ function LayoutContent({ insets, isMobile, isDrawerOpen, setIsDrawerOpen }: Layo
       justifyContent: 'space-between',
       paddingHorizontal: 12,
       borderBottomWidth: 1,
-      borderBottomColor: currentTheme.colors.border,
+      borderBottomColor: currentTheme.colors.divider,
       backgroundColor: currentTheme.colors.surface,
       zIndex: 10000,
       position: 'relative',

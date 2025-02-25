@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, ScrollView, Pressable, ViewStyle, TextStyle } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { CoachForm } from '@/components/Admin/CoachForm';
@@ -9,10 +9,13 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useTheme } from "@/context/ThemeContext";
 
-export default function AdminCoaches() {
+export default function CoachAdminPage() {
+  const { currentTheme } = useTheme();
   const [coaches, setCoaches] = useState<CoachDetail[]>([]);
   const [editingCoach, setEditingCoach] = useState<CoachDetail | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -20,6 +23,77 @@ export default function AdminCoaches() {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 20,
+      backgroundColor: currentTheme.colors.background,
+      alignItems: 'center',
+    } as ViewStyle,
+    
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 24,
+      width: '100%',
+      maxWidth: 800,
+    } as ViewStyle,
+    
+    title: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      color: currentTheme.colors.text,
+    } as TextStyle,
+    
+    coachList: {
+      width: '100%',
+      maxWidth: 800,
+      flexDirection: 'column',
+      gap: 16,
+    } as ViewStyle,
+    
+    coachCard: {
+      backgroundColor: currentTheme.colors.surface,
+      padding: 16,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: currentTheme.colors.divider,
+      marginBottom: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 16,
+    } as ViewStyle,
+    
+    addButton: {
+      backgroundColor: currentTheme.colors.button.primary.background,
+      padding: 12,
+      borderRadius: 8,
+    } as ViewStyle,
+    
+    editButton: {
+      backgroundColor: currentTheme.colors.button.primary.background,
+      padding: 8,
+      borderRadius: 4,
+    } as ViewStyle,
+    
+    buttonText: {
+      color: currentTheme.colors.button.primary.text,
+      fontSize: 16,
+    } as TextStyle,
+    
+    coachText: {
+      color: currentTheme.colors.text,
+      fontSize: 16,
+    } as TextStyle,
+    
+    coachStatus: {
+      color: currentTheme.colors.textSecondary,
+      fontSize: 14,
+    } as TextStyle,
+  });
 
   async function fetchAllCoaches() {
     const { data, error } = await supabase
@@ -125,8 +199,11 @@ export default function AdminCoaches() {
     <ScrollView>
       <ThemedView style={styles.container}>
         <ThemedView style={styles.header}>
-          <ThemedText style={styles.title}>Manage Coaches</ThemedText>
-          <Pressable onPress={handleAddNew} style={styles.addButton}>
+          <ThemedText style={styles.title}>Coaches</ThemedText>
+          <Pressable 
+            style={[styles.addButton]}
+            onPress={() => setIsCreating(true)}
+          >
             <ThemedText style={styles.buttonText}>Add New Coach</ThemedText>
           </Pressable>
         </ThemedView>
@@ -153,6 +230,7 @@ export default function AdminCoaches() {
                     key={coach.id} 
                     coach={coach} 
                     onEdit={setEditingCoach}
+                    onRefresh={fetchAllCoaches}
                   />
                 ))}
               </ThemedView>
@@ -166,71 +244,151 @@ export default function AdminCoaches() {
 
 function SortableCoachItem({ 
   coach, 
-  onEdit 
+  onEdit,
+  onRefresh
 }: { 
   coach: CoachDetail;
   onEdit: (coach: CoachDetail) => void;
+  onRefresh: () => Promise<void>;
 }) {
+  const { currentTheme } = useTheme();
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: coach.id });
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const styles = StyleSheet.create({
+    coachCard: {
+      backgroundColor: currentTheme.colors.surface,
+      padding: 16,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: currentTheme.colors.divider,
+      marginBottom: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 16,
+    } as ViewStyle,
+    
+    editButton: {
+      backgroundColor: currentTheme.colors.button.primary.background,
+      padding: 8,
+      borderRadius: 4,
+    } as ViewStyle,
+    
+    buttonText: {
+      color: currentTheme.colors.button.primary.text,
+      fontSize: 16,
+    } as TextStyle,
+    
+    coachText: {
+      color: currentTheme.colors.text,
+      fontSize: 16,
+    } as TextStyle,
+    
+    coachStatus: {
+      color: currentTheme.colors.textSecondary,
+      fontSize: 14,
+    } as TextStyle,
+    
+    actionButtons: {
+      flexDirection: 'row',
+      gap: 8,
+      alignItems: 'center',
+    } as ViewStyle,
+
+    deleteButton: {
+      backgroundColor: currentTheme.colors.status.error.background,
+      padding: 8,
+      borderRadius: 4,
+    } as ViewStyle,
+
+    checkbox: {
+      width: 20,
+      height: 20,
+      borderWidth: 2,
+      borderColor: currentTheme.colors.divider,
+      borderRadius: 4,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: coach.show ? currentTheme.colors.primary : 'transparent',
+    } as ViewStyle,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: transition || undefined,
   };
   
+  async function handleVisibilityToggle() {
+    try {
+      await updateCoach({
+        ...coach,
+        show: !coach.show
+      });
+      await onRefresh();
+    } catch (error) {
+      console.error('Error updating visibility:', error);
+    }
+  }
+
+  async function handleDelete() {
+    try {
+      const { error } = await supabase
+        .from('coaches')
+        .delete()
+        .eq('id', coach.id);
+      
+      if (error) throw error;
+      await onRefresh();
+    } catch (error) {
+      console.error('Error deleting coach:', error);
+    }
+  }
+
   return (
     <div ref={setNodeRef}>
-      <ThemedView style={[styles.coachItem, style]}>
+      <ThemedView style={[styles.coachCard, style]}>
         <div {...attributes} {...listeners} style={{ cursor: 'grab' }}>
           <ThemedText>⋮</ThemedText>
         </div>
-        <ThemedText>{coach.name}</ThemedText>
-        <ThemedText>({coach.show ? 'Visible' : 'Hidden'})</ThemedText>
-        <Pressable onPress={() => onEdit(coach)} style={styles.editButton}>
-          <ThemedText style={styles.buttonText}>Edit</ThemedText>
+        
+        <Pressable 
+          style={styles.checkbox}
+          onPress={handleVisibilityToggle}
+        >
+          {coach.show && <ThemedText>✓</ThemedText>}
         </Pressable>
+        
+        <ThemedText style={styles.coachText}>{coach.name}</ThemedText>
+        
+        <ThemedView style={styles.actionButtons}>
+          <Pressable onPress={() => onEdit(coach)} style={styles.editButton}>
+            <ThemedText style={styles.buttonText}>Edit</ThemedText>
+          </Pressable>
+          
+          {isDeleting ? (
+            <ThemedView style={styles.actionButtons}>
+              <ThemedText style={styles.coachStatus}>Delete?</ThemedText>
+              <Pressable onPress={handleDelete} style={styles.deleteButton}>
+                <ThemedText style={styles.buttonText}>Yes</ThemedText>
+              </Pressable>
+              <Pressable 
+                onPress={() => setIsDeleting(false)} 
+                style={styles.editButton}
+              >
+                <ThemedText style={styles.buttonText}>No</ThemedText>
+              </Pressable>
+            </ThemedView>
+          ) : (
+            <Pressable 
+              onPress={() => setIsDeleting(true)} 
+              style={styles.deleteButton}
+            >
+              <ThemedText style={styles.buttonText}>Delete</ThemedText>
+            </Pressable>
+          )}
+        </ThemedView>
       </ThemedView>
     </div>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    gap: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  coachList: {
-    gap: 10,
-  },
-  coachItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: 'black',
-    borderRadius: 8,
-  },
-  editButton: {
-    backgroundColor: '#007AFF',
-    padding: 8,
-    borderRadius: 4,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-  },
-  addButton: {
-    backgroundColor: '#007AFF',
-    padding: 12,
-    borderRadius: 8,
-  },
-}); 
+} 

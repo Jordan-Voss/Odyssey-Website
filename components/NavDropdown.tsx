@@ -77,6 +77,8 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
   const isActive = (href?: Route) => pathname === href;
   const isParentActive = hasSubItems(item) && item.subItems.some(subItem => subItem.href === pathname);
 
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
+
   const styles = StyleSheet.create({
     container: {
       position: 'relative',
@@ -96,14 +98,15 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
       width: '100%',
       paddingLeft: 16,
       marginTop: 4,
-      backgroundColor: 'blue',
+      backgroundColor: currentTheme.colors.surface,
+      borderColor: currentTheme.colors.divider,
     },
     link: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingVertical: 12,
-      borderColor: currentTheme.colors.border,
+      borderColor: currentTheme.colors.divider,
       position: 'relative',
     },
     mainLink: {
@@ -147,7 +150,7 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
       width: '100%',
       borderRadius: 8,
       backgroundColor: currentTheme.colors.background,
-      borderColor: currentTheme.colors.border,
+      borderColor: currentTheme.colors.divider,
       borderWidth: 1,
       shadowColor: currentTheme.colors.shadow,
       shadowOffset: { width: 0, height: 2 },
@@ -162,6 +165,16 @@ export function NavDropdown({ item, isMobile, style, onClose }: NavDropdownProps
     },
     hoverableText: {
       cursor: 'pointer',
+    },
+    button: {
+      backgroundColor: currentTheme.colors.button.primary.background,
+      color: currentTheme.colors.button.primary.text,
+      borderColor: currentTheme.colors.button.primary.border,
+    },
+    buttonHovered: {
+      backgroundColor: currentTheme.colors.button.primary.hover.background,
+      color: currentTheme.colors.button.primary.hover.text,
+      borderColor: currentTheme.colors.button.primary.hover.border,
     },
   });
 

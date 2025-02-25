@@ -170,61 +170,173 @@ export interface ThemeColors {
   // Main colors
   primary: string;
   secondary: string;
+  tertiary: string;
   
   // Backgrounds
   background: string;
   surface: string;
   surfaceAlt: string;
+  surfaceHover: string;
   
   // Text
   text: string;
   textSecondary: string;
+  textTertiary: string;
   textInverse: string;
-  priceText: string;
-  statNumber: string;
-  headerText: string;
+  textDisabled: string;
+  link: string;
+  linkHover: string;
   
-  // Interactive
+  // Buttons
   button: {
     primary: {
       background: string;
       text: string;
-      hover: string;
-      active: string;
+      border: string;
+      hover: {
+        background: string;
+        text: string;
+        border: string;
+      },
+      active: {
+        background: string;
+        text: string;
+        border: string;
+      },
+      disabled: {
+        background: string;
+        text: string;
+        border: string;
+      }
     },
     secondary: {
       background: string;
       text: string;
-      hover: string;
-      active: string;
+      border: string;
+      hover: {
+        background: string;
+        text: string;
+        border: string;
+      },
+      active: {
+        background: string;
+        text: string;
+        border: string;
+      },
+      disabled: {
+        background: string;
+        text: string;
+        border: string;
+      }
     },
     cta: {
       background: string;
       text: string;
-      hover: string;
-      active: string;
+      border: string;
+      hover: {
+        background: string;
+        text: string;
+        border: string;
+      },
+      active: {
+        background: string;
+        text: string;
+        border: string;
+      },
+      disabled: {
+        background: string;
+        text: string;
+        border: string;
+      }
     }
   },
   
-  // UI Elements
-  border: string;
-  shadow: string;
-  overlay: string;
+  // Forms
+  input: {
+    background: string;
+    text: string;
+    border: string;
+    placeholder: string;
+    focus: {
+      background: string;
+      border: string;
+      shadow: string;
+    },
+    error: {
+      background: string;
+      border: string;
+      text: string;
+    }
+  },
   
-  // Cards & Sections
+  // Cards
   card: {
     background: string;
     border: string;
     shadow: string;
+    hover: {
+      background: string;
+      border: string;
+      shadow: string;
+    }
   },
   
-  // Status
-  error: string;
-  success: string;
-  warning: string;
-  info: string;
-  icon: string;
-  image_overlay: string;
+  // Status/Feedback
+  status: {
+    error: {
+      background: string;
+      text: string;
+      border: string;
+    },
+    success: {
+      background: string;
+      text: string;
+      border: string;
+    },
+    warning: {
+      background: string;
+      text: string;
+      border: string;
+    },
+    info: {
+      background: string;
+      text: string;
+      border: string;
+    }
+  },
+  
+  // Navigation
+  nav: {
+    background: string;
+    text: string;
+    hover: {
+      background: string;
+      text: string;
+    },
+    active: {
+      background: string;
+      text: string;
+      border: string;
+    }
+  },
+  
+  // Misc UI
+  divider: string;
+  shadow: string;
+  overlay: {
+    background: string;
+    text: string;
+  },
+  tooltip: {
+    background: string;
+    text: string;
+    border: string;
+  },
+  icon: {
+    primary: string;
+    secondary: string;
+    disabled: string;
+  }
 }
 
 export interface Theme {
@@ -289,14 +401,21 @@ export async function updateTheme(theme: Theme): Promise<boolean> {
   try {
     const { error } = await supabase
       .from('themes')
-      .update({
+      .upsert({  // Use upsert instead of update to handle new themes
+        id: theme.id,
         name: theme.name,
         colors: theme.colors,
+        is_active: theme.is_active,
         updated_at: new Date().toISOString()
-      })
-      .eq('id', theme.id);
+      });
 
     if (error) throw error;
+    
+    // If this is the active theme, refresh the context
+    if (theme.is_active) {
+      await getActiveTheme();
+    }
+    
     return true;
   } catch (error) {
     console.error('Error updating theme:', error);
@@ -328,3 +447,103 @@ export async function migrateThemes(): Promise<void> {
     console.error('Error migrating themes:', error);
   }
 } 
+
+export interface Author {
+  id: string;
+  name: string;
+  bio?: string;
+  avatar_url?: string;
+  role?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function getAllAuthors(): Promise<Author[]> {
+  const { data, error } = await supabase
+    .from('authors')
+    .select('*')
+    .order('name');
+
+  if (error) {
+    console.error('Error fetching authors:', error);
+    return [];
+  }
+
+  return data;
+}
+
+export async function getAuthorById(id: string): Promise<Author | null> {
+  const { data, error } = await supabase
+    .from('authors')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching author:', error);
+    return null;
+  }
+
+  return data;
+}
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  author_id: string;
+  author?: Author;
+  image_url?: string;
+  published_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function getAllBlogPosts(): Promise<BlogPost[]> {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select(`
+      *,
+      author:authors(*)
+    `)
+    .order('published_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching blog posts:', error);
+    return [];
+  }
+
+  return data;
+}
+
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+
+  if (error) {
+    console.error('Error fetching blog post:', error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function createBlogPost(post: Omit<BlogPost, 'id' | 'created_at' | 'updated_at'>): Promise<BlogPost | null> {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .insert(post)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating blog post:', error);
+    return null;
+  }
+
+  return data;
+}
